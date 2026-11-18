@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "MiawDo",
+    "slug": "miawdo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.miawdo.app"
+    },
+    "android": {
+      "package": "com.miawdo.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FAF7F2",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "largeIcon": "./assets/icon.png",
+          "color": "#D96B43",
+          "defaultChannel": "default",
+          "sounds": []
+        }
+      ],
+      "expo-font"
+    ]
+  }
+}
