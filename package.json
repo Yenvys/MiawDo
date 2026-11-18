@@ -1,7 +1,7 @@
 {
   "name": "miawdo",
   "version": "1.0.0",
-  "description": "MiawDo - Clean & Cozy Cat-Themed To-Do List & Productivity App",
+  "description": "MiawDo - Aplikasi Mobile To-Do List & Pelacak Produktivitas",
   "main": "index.ts",
   "author": "Yenvys",
   "license": "MIT",

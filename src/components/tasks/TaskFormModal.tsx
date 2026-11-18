@@ -78,6 +78,10 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const [endCount, setEndCount] = useState('10');
 
   const [reminderOffset, setReminderOffset] = useState<number | null>(15);
+  const [isCustomReminder, setIsCustomReminder] = useState(false);
+  const [customReminderVal, setCustomReminderVal] = useState('2');
+  const [customReminderUnit, setCustomReminderUnit] = useState<'minutes' | 'hours' | 'days'>('hours');
+
   const [subtaskDrafts, setSubtaskDrafts] = useState<
     { id?: string; title: string; isCompleted?: boolean }[]
   >([]);
@@ -105,7 +109,25 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         setEndDate(editingTask.recurrenceRule.endDate || addDays(todayStr, 30));
         setEndCount(String(editingTask.recurrenceRule.endCount || 10));
       }
-      setReminderOffset(editingTask.reminderOffsetMinutes);
+      const off = editingTask.reminderOffsetMinutes;
+      setReminderOffset(off);
+      if (off !== null && !REMINDER_OFFSET_OPTIONS.some((r) => r.value === off)) {
+        setIsCustomReminder(true);
+        if (off % 1440 === 0) {
+          setCustomReminderVal(String(off / 1440));
+          setCustomReminderUnit('days');
+        } else if (off % 60 === 0) {
+          setCustomReminderVal(String(off / 60));
+          setCustomReminderUnit('hours');
+        } else {
+          setCustomReminderVal(String(off));
+          setCustomReminderUnit('minutes');
+        }
+      } else {
+        setIsCustomReminder(false);
+        setCustomReminderVal('2');
+        setCustomReminderUnit('hours');
+      }
       setSubtaskDrafts(
         editingTask.subtasks.map((s) => ({
           id: s.id,
@@ -131,12 +153,89 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
       setEndDate(addDays(todayStr, 30));
       setEndCount('10');
       setReminderOffset(15);
+      setIsCustomReminder(false);
+      setCustomReminderVal('2');
+      setCustomReminderUnit('hours');
       setSubtaskDrafts([]);
       setNewSubtaskText('');
     }
   }, [visible, editingTask, defaultDate, categories, todayStr]);
 
   if (!visible) return null;
+
+  // Helper fungsi untuk Atur Jam Bebas
+  const timeParts = (deadlineTime || '17:00').split(':');
+  const currentHourStr = timeParts[0] || '17';
+  const currentMinuteStr = timeParts[1] || '00';
+
+  const handleUpdateHour = (newHour: string) => {
+    const clean = newHour.replace(/\D/g, '').slice(0, 2);
+    if (!clean) {
+      setDeadlineTime(`00:${currentMinuteStr}`);
+      return;
+    }
+    let hNum = parseInt(clean, 10);
+    if (isNaN(hNum)) hNum = 0;
+    if (hNum > 23) hNum = 23;
+    const formatted = String(hNum).padStart(2, '0');
+    setDeadlineTime(`${formatted}:${currentMinuteStr}`);
+  };
+
+  const handleUpdateMinute = (newMinute: string) => {
+    const clean = newMinute.replace(/\D/g, '').slice(0, 2);
+    if (!clean) {
+      setDeadlineTime(`${currentHourStr}:00`);
+      return;
+    }
+    let mNum = parseInt(clean, 10);
+    if (isNaN(mNum)) mNum = 0;
+    if (mNum > 59) mNum = 59;
+    const formatted = String(mNum).padStart(2, '0');
+    setDeadlineTime(`${currentHourStr}:${formatted}`);
+  };
+
+  const adjustHour = (delta: number) => {
+    let h = parseInt(currentHourStr, 10);
+    if (isNaN(h)) h = 12;
+    h = (h + delta + 24) % 24;
+    setDeadlineTime(`${String(h).padStart(2, '0')}:${currentMinuteStr}`);
+  };
+
+  const adjustMinute = (delta: number) => {
+    let m = parseInt(currentMinuteStr, 10);
+    if (isNaN(m)) m = 0;
+    m = (m + delta + 60) % 60;
+    setDeadlineTime(`${currentHourStr}:${String(m).padStart(2, '0')}`);
+  };
+
+  const setTimeToCurrent = () => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    setDeadlineTime(`${hh}:${mm}`);
+  };
+
+  // Helper fungsi untuk Custom Notifikasi Pengingat
+  const applyCustomReminder = (
+    valStr: string,
+    unit: 'minutes' | 'hours' | 'days'
+  ) => {
+    const clean = valStr.replace(/\D/g, '');
+    const num = clean ? Math.max(1, parseInt(clean, 10)) : 1;
+    setCustomReminderVal(String(num));
+    setCustomReminderUnit(unit);
+    setIsCustomReminder(true);
+    let mult = 1;
+    if (unit === 'hours') mult = 60;
+    if (unit === 'days') mult = 1440;
+    setReminderOffset(num * mult);
+  };
+
+  const adjustCustomReminderNum = (delta: number) => {
+    const current = parseInt(customReminderVal.replace(/\D/g, ''), 10) || 1;
+    const nextVal = Math.max(1, current + delta);
+    applyCustomReminder(String(nextVal), customReminderUnit);
+  };
 
   const toggleDayOfWeek = (dayIndex: number) => {
     setDaysOfWeek((prev) =>
@@ -572,45 +671,218 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                       })}
                     </View>
 
+                    {/* Card Atur Jam Bebas yang Rapi dan Jelas */}
                     <View
                       style={[
-                        styles.customTimeRow,
+                        styles.customTimeCard,
                         {
-                          backgroundColor: theme.surfaceMuted,
+                          backgroundColor: theme.surface,
                           borderColor: theme.border,
                         },
                       ]}
                     >
-                      <Feather
-                        name="clock"
-                        size={15}
-                        color={theme.textSecondary}
-                        style={{ marginRight: 8 }}
-                      />
-                      <Text
-                        style={{
-                          fontSize: 12.5,
-                          color: theme.textSecondary,
-                          fontWeight: '600',
-                          marginRight: 8,
-                        }}
-                      >
-                        Atur Jam Bebas:
-                      </Text>
-                      <TextInput
-                        value={deadlineTime}
-                        onChangeText={setDeadlineTime}
-                        placeholder="HH:mm"
-                        placeholderTextColor={theme.textMuted}
-                        style={[
-                          styles.customTimeInput,
-                          {
-                            color: theme.textPrimary,
-                            backgroundColor: theme.surface,
-                            borderColor: theme.border,
-                          },
-                        ]}
-                      />
+                      <View style={styles.customTimeHeader}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <Feather name="clock" size={15} color={theme.accent} />
+                          <Text style={[styles.customTimeTitle, { color: theme.textPrimary }]}>
+                            Atur Jam Bebas
+                          </Text>
+                        </View>
+                        <View
+                          style={[
+                            styles.timeBadgePill,
+                            { backgroundColor: theme.accentSoft },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.timeBadgeText,
+                              { color: theme.accent },
+                            ]}
+                          >
+                            {deadlineTime ? `Pukul ${deadlineTime}` : '17:00'}
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Box Input Jam & Menit */}
+                      <View style={styles.timeBoxesRow}>
+                        {/* Kolom Jam */}
+                        <View style={styles.timeUnitCol}>
+                          <View style={styles.stepperWrap}>
+                            <Pressable
+                              onPress={() => adjustHour(1)}
+                              style={[
+                                styles.timeStepBtn,
+                                { backgroundColor: theme.surfaceMuted },
+                              ]}
+                            >
+                              <Feather name="chevron-up" size={16} color={theme.textPrimary} />
+                            </Pressable>
+                            <TextInput
+                              value={currentHourStr}
+                              onChangeText={handleUpdateHour}
+                              keyboardType="number-pad"
+                              maxLength={2}
+                              selectTextOnFocus
+                              style={[
+                                styles.timeDigitBox,
+                                {
+                                  backgroundColor: theme.surfaceMuted,
+                                  borderColor: theme.border,
+                                  color: theme.textPrimary,
+                                },
+                              ]}
+                            />
+                            <Pressable
+                              onPress={() => adjustHour(-1)}
+                              style={[
+                                styles.timeStepBtn,
+                                { backgroundColor: theme.surfaceMuted },
+                              ]}
+                            >
+                              <Feather name="chevron-down" size={16} color={theme.textPrimary} />
+                            </Pressable>
+                          </View>
+                          <Text
+                            style={[
+                              styles.timeUnitLabel,
+                              { color: theme.textSecondary },
+                            ]}
+                          >
+                            Jam (00–23)
+                          </Text>
+                        </View>
+
+                        <Text style={[styles.timeColon, { color: theme.textPrimary }]}>:</Text>
+
+                        {/* Kolom Menit */}
+                        <View style={styles.timeUnitCol}>
+                          <View style={styles.stepperWrap}>
+                            <Pressable
+                              onPress={() => adjustMinute(5)}
+                              style={[
+                                styles.timeStepBtn,
+                                { backgroundColor: theme.surfaceMuted },
+                              ]}
+                            >
+                              <Feather name="chevron-up" size={16} color={theme.textPrimary} />
+                            </Pressable>
+                            <TextInput
+                              value={currentMinuteStr}
+                              onChangeText={handleUpdateMinute}
+                              keyboardType="number-pad"
+                              maxLength={2}
+                              selectTextOnFocus
+                              style={[
+                                styles.timeDigitBox,
+                                {
+                                  backgroundColor: theme.surfaceMuted,
+                                  borderColor: theme.border,
+                                  color: theme.textPrimary,
+                                },
+                              ]}
+                            />
+                            <Pressable
+                              onPress={() => adjustMinute(-5)}
+                              style={[
+                                styles.timeStepBtn,
+                                { backgroundColor: theme.surfaceMuted },
+                              ]}
+                            >
+                              <Feather name="chevron-down" size={16} color={theme.textPrimary} />
+                            </Pressable>
+                          </View>
+                          <Text
+                            style={[
+                              styles.timeUnitLabel,
+                              { color: theme.textSecondary },
+                            ]}
+                          >
+                            Menit (00–59)
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Tombol Cepat Penyesuaian Jam */}
+                      <View style={styles.quickTimeChipsRow}>
+                        <Pressable
+                          onPress={setTimeToCurrent}
+                          style={[
+                            styles.quickTimeChip,
+                            {
+                              backgroundColor: theme.surfaceMuted,
+                              borderColor: theme.border,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.quickTimeChipText,
+                              { color: theme.textPrimary },
+                            ]}
+                          >
+                            Jam Sekarang
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() => adjustMinute(15)}
+                          style={[
+                            styles.quickTimeChip,
+                            {
+                              backgroundColor: theme.surfaceMuted,
+                              borderColor: theme.border,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.quickTimeChipText,
+                              { color: theme.textPrimary },
+                            ]}
+                          >
+                            +15m
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() => adjustMinute(30)}
+                          style={[
+                            styles.quickTimeChip,
+                            {
+                              backgroundColor: theme.surfaceMuted,
+                              borderColor: theme.border,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.quickTimeChipText,
+                              { color: theme.textPrimary },
+                            ]}
+                          >
+                            +30m
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() => adjustHour(1)}
+                          style={[
+                            styles.quickTimeChip,
+                            {
+                              backgroundColor: theme.surfaceMuted,
+                              borderColor: theme.border,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.quickTimeChipText,
+                              { color: theme.textPrimary },
+                            ]}
+                          >
+                            +1 Jam
+                          </Text>
+                        </Pressable>
+                      </View>
                     </View>
                   </View>
                 ) : null}
@@ -988,11 +1260,14 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             </Text>
             <View style={styles.grid4Wrap}>
               {REMINDER_OFFSET_OPTIONS.map((rem) => {
-                const active = reminderOffset === rem.value;
+                const active = !isCustomReminder && reminderOffset === rem.value;
                 return (
                   <Pressable
                     key={rem.label}
-                    onPress={() => setReminderOffset(rem.value)}
+                    onPress={() => {
+                      setIsCustomReminder(false);
+                      setReminderOffset(rem.value);
+                    }}
                     style={[
                       styles.grid4Item,
                       {
@@ -1017,6 +1292,204 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                   </Pressable>
                 );
               })}
+            </View>
+
+            {/* Slot Kotak Full: Custom Notifikasi Pengingat (Hari / Jam / Menit Sebelum) */}
+            <View
+              style={[
+                styles.customReminderBox,
+                {
+                  backgroundColor: isCustomReminder
+                    ? theme.accentSoft
+                    : theme.surfaceMuted,
+                  borderColor: isCustomReminder ? theme.accent : theme.border,
+                },
+              ]}
+            >
+              <Pressable
+                onPress={() =>
+                  applyCustomReminder(customReminderVal || '2', customReminderUnit)
+                }
+                style={styles.customReminderHeader}
+              >
+                <View style={styles.customReminderTitleRow}>
+                  <Feather
+                    name="bell"
+                    size={16}
+                    color={isCustomReminder ? theme.accent : theme.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.customReminderTitle,
+                      {
+                        color: isCustomReminder
+                          ? theme.accent
+                          : theme.textPrimary,
+                      },
+                    ]}
+                  >
+                    Kustom Notifikasi Pengingat
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.customReminderActiveBadge,
+                    {
+                      backgroundColor: isCustomReminder
+                        ? theme.accent
+                        : theme.surface,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.customReminderActiveText,
+                      {
+                        color: isCustomReminder
+                          ? theme.onAccent
+                          : theme.textSecondary,
+                      },
+                    ]}
+                  >
+                    {isCustomReminder ? '✓ Dipakai' : 'Pilih Kustom'}
+                  </Text>
+                </View>
+              </Pressable>
+
+              <View style={styles.customReminderBody}>
+                {/* Stepper Jumlah Waktu */}
+                <View style={styles.customReminderStepperRow}>
+                  <Text
+                    style={[
+                      styles.customReminderStepperLabel,
+                      { color: theme.textSecondary },
+                    ]}
+                  >
+                    Ingatkan sebelum:
+                  </Text>
+                  <View style={styles.stepperControl}>
+                    <Pressable
+                      onPress={() => adjustCustomReminderNum(-1)}
+                      style={[
+                        styles.stepperNumBtn,
+                        {
+                          backgroundColor: theme.surface,
+                          borderColor: theme.border,
+                        },
+                      ]}
+                    >
+                      <Feather
+                        name="minus"
+                        size={16}
+                        color={theme.textPrimary}
+                      />
+                    </Pressable>
+                    <TextInput
+                      value={customReminderVal}
+                      onChangeText={(txt) =>
+                        applyCustomReminder(txt, customReminderUnit)
+                      }
+                      keyboardType="number-pad"
+                      maxLength={3}
+                      selectTextOnFocus
+                      style={[
+                        styles.stepperNumInput,
+                        {
+                          backgroundColor: theme.surface,
+                          borderColor: theme.border,
+                          color: theme.textPrimary,
+                        },
+                      ]}
+                    />
+                    <Pressable
+                      onPress={() => adjustCustomReminderNum(1)}
+                      style={[
+                        styles.stepperNumBtn,
+                        {
+                          backgroundColor: theme.surface,
+                          borderColor: theme.border,
+                        },
+                      ]}
+                    >
+                      <Feather
+                        name="plus"
+                        size={16}
+                        color={theme.textPrimary}
+                      />
+                    </Pressable>
+                  </View>
+                </View>
+
+                {/* 3 Opsi Unit: Menit Sebelum / Jam Sebelum / Hari Sebelum */}
+                <View style={styles.unitSegmentRow}>
+                  {[
+                    { id: 'minutes' as const, label: 'Menit Sebelum' },
+                    { id: 'hours' as const, label: 'Jam Sebelum' },
+                    { id: 'days' as const, label: 'Hari Sebelum' },
+                  ].map((u) => {
+                    const selected =
+                      isCustomReminder && customReminderUnit === u.id;
+                    return (
+                      <Pressable
+                        key={u.id}
+                        onPress={() =>
+                          applyCustomReminder(customReminderVal || '2', u.id)
+                        }
+                        style={[
+                          styles.unitSegmentBtn,
+                          {
+                            backgroundColor: selected
+                              ? theme.accent
+                              : theme.surface,
+                            borderColor: selected
+                              ? theme.accent
+                              : theme.border,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.unitSegmentText,
+                            {
+                              color: selected
+                                ? theme.onAccent
+                                : theme.textPrimary,
+                            },
+                          ]}
+                        >
+                          {u.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+
+                {/* Preview Keterangan Pengingat */}
+                <View
+                  style={[
+                    styles.customReminderPreview,
+                    { backgroundColor: theme.surface },
+                  ]}
+                >
+                  <PawPrintIcon size={12} color={theme.accent} />
+                  <Text
+                    style={[
+                      styles.customReminderPreviewText,
+                      { color: theme.textSecondary },
+                    ]}
+                  >
+                    {isCustomReminder
+                      ? `Notifikasi akan berbunyi ${customReminderVal || 1} ${
+                          customReminderUnit === 'days'
+                            ? 'hari'
+                            : customReminderUnit === 'hours'
+                            ? 'jam'
+                            : 'menit'
+                        } sebelum tenggat waktu.`
+                      : 'Ketuk slot ini untuk mengatur durasi pengingat bebas (hari/jam/menit sebelum).'}
+                  </Text>
+                </View>
+              </View>
             </View>
 
             {/* Tombol Simpan Utama */}
@@ -1192,24 +1665,185 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 6,
   },
-  customTimeRow: {
+  customTimeCard: {
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 12,
+    marginTop: 10,
+  },
+  customTimeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginTop: 8,
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-  customTimeInput: {
-    width: 70,
-    height: 32,
-    borderWidth: 1,
-    borderRadius: 6,
-    textAlign: 'center',
+  customTimeTitle: {
     fontSize: 13,
     fontWeight: '700',
+  },
+  timeBadgePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  timeBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  timeBoxesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginVertical: 4,
+  },
+  timeUnitCol: {
+    alignItems: 'center',
+  },
+  stepperWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  timeStepBtn: {
+    width: 32,
+    height: 38,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timeDigitBox: {
+    width: 50,
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '800',
     padding: 0,
+  },
+  timeUnitLabel: {
+    fontSize: 10.5,
+    fontWeight: '600',
+    marginTop: 3,
+  },
+  timeColon: {
+    fontSize: 22,
+    fontWeight: '800',
+    marginTop: -14,
+  },
+  quickTimeChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 10,
+    justifyContent: 'center',
+  },
+  quickTimeChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  quickTimeChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  customReminderBox: {
+    width: '100%',
+    borderRadius: 14,
+    borderWidth: 1.5,
+    padding: 12,
+    marginTop: 10,
+  },
+  customReminderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  customReminderTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  customReminderTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  customReminderActiveBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  customReminderActiveText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  customReminderBody: {
+    gap: 10,
+  },
+  customReminderStepperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  customReminderStepperLabel: {
+    fontSize: 12.5,
+    fontWeight: '600',
+  },
+  stepperControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  stepperNumBtn: {
+    width: 32,
+    height: 36,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepperNumInput: {
+    width: 52,
+    height: 36,
+    borderRadius: 8,
+    borderWidth: 1,
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '800',
+    padding: 0,
+  },
+  unitSegmentRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  unitSegmentBtn: {
+    flex: 1,
+    minHeight: 36,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  unitSegmentText: {
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  customReminderPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    padding: 8,
+    borderRadius: 8,
+  },
+  customReminderPreviewText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    flex: 1,
   },
   chipsWrap: {
     flexDirection: 'row',

@@ -649,7 +649,7 @@ export const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
             <Text
               style={[styles.aboutSubtitle, { color: theme.textSecondary }]}
             >
-              Versi 1.0.0 • Clean & Cozy To-Do
+              Versi 1.0.0
             </Text>
           </View>
         </View>
@@ -663,7 +663,7 @@ export const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
           <Text
             style={[styles.aboutCopyrightText, { color: theme.textMuted }]}
           >
-            Hak Cipta © 2026 Yenvys. Seluruh hak cipta dilindungi.
+            (c) 2026 Yenvys
           </Text>
         </View>
       </View>

@@ -25,7 +25,6 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
   // Animasi Values
   const bounceY = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.92)).current;
-  const pulseOrb = useRef(new Animated.Value(0.4)).current;
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const paw1Scale = useRef(new Animated.Value(0)).current;
   const paw2Scale = useRef(new Animated.Value(0)).current;
@@ -92,25 +91,7 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
       ])
     );
 
-    // 3. Loop Denyut Cahaya Lembut (Ambient Glow Aura)
-    const glowLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseOrb, {
-          toValue: 0.85,
-          duration: 900,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseOrb, {
-          toValue: 0.35,
-          duration: 900,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-
-    // 4. Animasi Kedipan Mata Kucing Alami (Natural Blink)
+    // 3. Animasi Kedipan Mata Kucing Alami (Natural Blink)
     const blinkLoop = Animated.loop(
       Animated.sequence([
         Animated.delay(2600),
@@ -127,7 +108,7 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
       ])
     );
 
-    // 5. Jejak Kaki Bertahap (Staggered Paws)
+    // 4. Jejak Kaki Bertahap (Staggered Paws)
     const pawsLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(paw1Scale, {
@@ -171,11 +152,10 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
     );
 
     floatLoop.start();
-    glowLoop.start();
     blinkLoop.start();
     pawsLoop.start();
 
-    // 6. Transisi Keluar yang Mulus
+    // 5. Transisi Keluar yang Mulus
     const exitTimer = setTimeout(() => {
       Animated.timing(exitOpacity, {
         toValue: 0,
@@ -190,14 +170,12 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
     return () => {
       clearTimeout(exitTimer);
       floatLoop.stop();
-      glowLoop.stop();
       blinkLoop.stop();
       pawsLoop.stop();
     };
   }, [
     bounceY,
     scale,
-    pulseOrb,
     blinkAnim,
     paw1Scale,
     paw2Scale,
@@ -225,25 +203,6 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
 
       {/* Kontainer Utama Terpusat */}
       <View style={styles.centerContainer}>
-        {/* Lingkaran Cahaya Lembut (Ambient Glow Aura) */}
-        <Animated.View
-          style={[
-            styles.glowBackdrop,
-            {
-              backgroundColor: theme.accentSoft,
-              opacity: pulseOrb,
-              transform: [
-                {
-                  scale: pulseOrb.interpolate({
-                    inputRange: [0.35, 0.85],
-                    outputRange: [0.95, 1.25],
-                  }),
-                },
-              ],
-            },
-          ]}
-        />
-
         {/* Kartu Maskot Kucing Presisi & Rapi (Clean Geometric Cat Mascot) */}
         <Animated.View
           style={[
@@ -429,12 +388,9 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
         <View style={styles.copyrightRow}>
           <PawPrintIcon size={12} color={theme.accent} />
           <Text style={[styles.copyrightText, { color: theme.textMuted }]}>
-            © 2026 Yenvys • MiawDo
+            (c) 2026 Yenvys
           </Text>
         </View>
-        <Text style={[styles.copyrightSubtext, { color: theme.textMuted }]}>
-          Clean & Cozy Cat Productivity App
-        </Text>
       </Animated.View>
     </Animated.View>
   );
@@ -456,12 +412,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
-  glowBackdrop: {
-    position: 'absolute',
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-  },
   mascotCard: {
     width: 120,
     height: 120,
@@ -473,7 +423,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     // iOS shadow
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.22,
+    shadowOpacity: 0.18,
     shadowRadius: 16,
     // Android elevation
     elevation: 8,
@@ -686,7 +636,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 44 : 32,
     alignItems: 'center',
-    gap: 4,
   },
   copyrightRow: {
     flexDirection: 'row',
@@ -697,11 +646,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.3,
-  },
-  copyrightSubtext: {
-    fontSize: 10.5,
-    fontWeight: '500',
-    letterSpacing: 0.2,
-    opacity: 0.85,
   },
 });

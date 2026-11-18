@@ -2,7 +2,7 @@
 
 # 🐾 MiawDo
 
-**Aplikasi Mobile To-Do List & Pelacak Produktivitas (Clean & Cozy Cat Theme)**
+**Aplikasi Mobile To-Do List & Pelacak Produktivitas**
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.88.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo-SDK%2058-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev/)
@@ -19,7 +19,7 @@
 
 ## 📖 Tentang MiawDo
 
-**MiawDo** adalah aplikasi *to-do list* dan pelacak produktivitas personal untuk perangkat bergerak (Android & iOS). Mengusung konsep desain **Clean Minimalist meets Cozy Feline**, MiawDo menghadirkan antarmuka yang tenang, bersih, serta bebas distraksi dengan sentuhan estetika kucing yang hangat dan menyenangkan.
+**MiawDo** adalah aplikasi *to-do list* dan pelacak produktivitas personal untuk perangkat bergerak (Android & iOS). Mengusung antarmuka yang tenang, bersih, serta bebas distraksi dengan sentuhan maskot kucing yang ramah.
 
 Aplikasi ini dibangun secara **100% Offline-First** dengan database lokal berkinerja tinggi (`expo-sqlite`). Semua data tugas, kategori, riwayat, dan pengaturan tersimpan sepenuhnya di perangkat Anda — tanpa akun wajib, tanpa analitik pihak ketiga, dan tanpa server awan (*zero cloud dependency*).
 
@@ -139,9 +139,10 @@ Pastikan komputer Anda telah terinstal:
 
 ## 📦 Mengunduh File APK Langsung
 
-File binary aplikasi Android siap pasang (**`MiawDo.apk`**) tersedia langsung di repositori ini. Anda dapat mengunduh dan memasangnya langsung ke perangkat Android tanpa perlu proses kompilasi lokal:
+File binary aplikasi Android siap pasang tersedia langsung di repositori ini:
 
-- Unduh file: [`MiawDo.apk`](./MiawDo.apk)
+- Unduh: [`MiawDo.apk`](./MiawDo.apk) *(Format standar / rekomendasi untuk sebagian besar perangkat Android)*
+- Unduh: [`MiawDo-Universal.apk`](./MiawDo-Universal.apk) *(Format universal kompatibel untuk seluruh arsitektur)*
 
 ---
 
@@ -152,7 +153,7 @@ Proyek ini dibuat dan dikembangkan oleh **Yenvys**.
 Didistribusikan di bawah lisensi resmi **MIT License**. Silakan baca file [LICENSE](LICENSE) untuk informasi lebih lanjut mengenai hak penggunaan dan distribusi.
 
 ```text
-Copyright (c) 2026 Yenvys. All rights reserved.
+(c) 2026 Yenvys
 ```
 
 ---
