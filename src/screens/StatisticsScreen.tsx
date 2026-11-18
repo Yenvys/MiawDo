@@ -663,7 +663,7 @@ export const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
           <Text
             style={[styles.aboutCopyrightText, { color: theme.textMuted }]}
           >
-            (c) 2026 Yenvys
+            © 2026 Yenvys
           </Text>
         </View>
       </View>

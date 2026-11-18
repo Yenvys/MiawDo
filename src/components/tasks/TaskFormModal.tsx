@@ -635,43 +635,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                 {/* Jam Pengerjaan (Hanya jika Tanggal & Jam) */}
                 {deadlineType === 'datetime' ? (
                   <View style={{ marginTop: 12 }}>
-                    <Text style={[styles.subLabel, { color: theme.textSecondary }]}>
-                      Jam Pengerjaan:
-                    </Text>
-                    <View style={styles.grid4Wrap}>
-                      {['09:00', '13:00', '17:00', '20:00'].map((tm) => {
-                        const selected = deadlineTime === tm;
-                        return (
-                          <Pressable
-                            key={tm}
-                            onPress={() => setDeadlineTime(tm)}
-                            style={[
-                              styles.grid4Item,
-                              {
-                                backgroundColor: selected
-                                  ? theme.accent
-                                  : theme.surfaceMuted,
-                                borderColor: selected
-                                  ? theme.accent
-                                  : theme.border,
-                              },
-                            ]}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 12.5,
-                                fontWeight: '700',
-                                color: selected ? theme.onAccent : theme.textPrimary,
-                              }}
-                            >
-                              {tm}
-                            </Text>
-                          </Pressable>
-                        );
-                      })}
-                    </View>
-
-                    {/* Card Atur Jam Bebas yang Rapi dan Jelas */}
+                    {/* Card Jam Pengerjaan yang Rapi dan Jelas */}
                     <View
                       style={[
                         styles.customTimeCard,
@@ -685,7 +649,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                           <Feather name="clock" size={15} color={theme.accent} />
                           <Text style={[styles.customTimeTitle, { color: theme.textPrimary }]}>
-                            Atur Jam Bebas
+                            Jam Pengerjaan
                           </Text>
                         </View>
                         <View

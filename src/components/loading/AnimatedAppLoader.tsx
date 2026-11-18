@@ -388,7 +388,7 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
         <View style={styles.copyrightRow}>
           <PawPrintIcon size={12} color={theme.accent} />
           <Text style={[styles.copyrightText, { color: theme.textMuted }]}>
-            (c) 2026 Yenvys
+            © 2026 Yenvys
           </Text>
         </View>
       </Animated.View>

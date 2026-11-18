@@ -153,7 +153,7 @@ Proyek ini dibuat dan dikembangkan oleh **Yenvys**.
 Didistribusikan di bawah lisensi resmi **MIT License**. Silakan baca file [LICENSE](LICENSE) untuk informasi lebih lanjut mengenai hak penggunaan dan distribusi.
 
 ```text
-(c) 2026 Yenvys
+© 2026 Yenvys
 ```
 
 ---
