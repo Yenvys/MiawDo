@@ -137,12 +137,13 @@ Pastikan komputer Anda telah terinstal:
 
 ---
 
-## 📦 Mengunduh File APK Langsung
+## 📦 Mengunduh Aplikasi (APK)
 
-File binary aplikasi Android siap pasang tersedia langsung di repositori ini:
+File binary aplikasi Android siap pasang dapat diunduh langsung melalui halaman **GitHub Releases**:
 
-- Unduh: [`MiawDo.apk`](./MiawDo.apk) *(Format standar / rekomendasi untuk sebagian besar perangkat Android)*
-- Unduh: [`MiawDo-Universal.apk`](./MiawDo-Universal.apk) *(Format universal kompatibel untuk seluruh arsitektur)*
+- Kunjungi: [**Unduh APK di GitHub Releases**](https://github.com/Yenvys/MiawDo/releases)
+  - `MiawDo.apk` *(Rekomendasi untuk sebagian besar perangkat Android)*
+  - `MiawDo-Universal.apk` *(Format universal kompatibel untuk seluruh arsitektur)*
 
 ---
 

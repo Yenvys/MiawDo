@@ -44,6 +44,10 @@ yarn-error.*
 .idea/
 .vscode/
 
+# Android build artifacts
+*.apk
+*.aab
+
 # Claude and agent configuration & design documents
 .claude/
 AGENTS.md
