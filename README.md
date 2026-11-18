@@ -143,7 +143,6 @@ File binary aplikasi Android siap pasang dapat diunduh langsung melalui halaman 
 
 - Kunjungi: [**Unduh APK di GitHub Releases**](https://github.com/Yenvys/MiawDo/releases)
   - `MiawDo.apk` *(Rekomendasi untuk sebagian besar perangkat Android)*
-  - `MiawDo-Universal.apk` *(Format universal kompatibel untuk seluruh arsitektur)*
 
 ---
 
