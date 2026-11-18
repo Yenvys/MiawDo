@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   Alert,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -637,13 +636,7 @@ export const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
         ]}
       >
         <View style={styles.aboutHeader}>
-          <View style={styles.aboutIconContainer}>
-            <Image
-              source={require('../../assets/icon.png')}
-              style={styles.aboutIcon}
-              resizeMode="cover"
-            />
-          </View>
+          <CatMascotBadge isNight={theme.isNight} size={46} />
           <View style={{ flex: 1, marginLeft: 12 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={[styles.aboutTitle, { color: theme.textPrimary }]}>
@@ -900,17 +893,6 @@ const styles = StyleSheet.create({
   aboutHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  aboutIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#FAF7F2',
-  },
-  aboutIcon: {
-    width: '100%',
-    height: '100%',
   },
   aboutTitle: {
     fontSize: 16,

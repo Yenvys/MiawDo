@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   Easing,
-  Image,
   Platform,
   StatusBar,
   StyleSheet,
@@ -11,8 +10,6 @@ import {
 } from 'react-native';
 import { useAppTheme } from '../../theme/ThemeContext';
 import { PawPrintIcon } from '../cat/CatGraphics';
-
-const APP_ICON = require('../../../assets/icon.png');
 
 interface AnimatedAppLoaderProps {
   onFinish?: () => void;
@@ -25,42 +22,43 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
 }) => {
   const { theme } = useAppTheme();
 
-  // Animasi Value
+  // Animasi Values
   const bounceY = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.9)).current;
+  const scale = useRef(new Animated.Value(0.92)).current;
   const pulseOrb = useRef(new Animated.Value(0.4)).current;
+  const blinkAnim = useRef(new Animated.Value(1)).current;
   const paw1Scale = useRef(new Animated.Value(0)).current;
   const paw2Scale = useRef(new Animated.Value(0)).current;
   const paw3Scale = useRef(new Animated.Value(0)).current;
   const textFade = useRef(new Animated.Value(0)).current;
-  const textTranslateY = useRef(new Animated.Value(10)).current;
+  const textTranslateY = useRef(new Animated.Value(8)).current;
   const exitOpacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // 1. Entrance Animation (Icon Pop-In & Text Slide-In)
+    // 1. Entrance Anim (Card Pop-in & Text Fade-in)
     Animated.parallel([
       Animated.spring(scale, {
         toValue: 1,
-        tension: 50,
-        friction: 7,
+        tension: 45,
+        friction: 6,
         useNativeDriver: true,
       }),
       Animated.timing(textFade, {
         toValue: 1,
-        duration: 650,
+        duration: 600,
         delay: 200,
         useNativeDriver: true,
       }),
       Animated.timing(textTranslateY, {
         toValue: 0,
-        duration: 650,
+        duration: 600,
         delay: 200,
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
     ]).start();
 
-    // 2. Loop Animasi Mengapung Lembut (Floating & Breathing)
+    // 2. Loop Mengapung & Bernapas Lembut (Floating & Breathing)
     const floatLoop = Animated.loop(
       Animated.sequence([
         Animated.parallel([
@@ -112,7 +110,24 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
       ])
     );
 
-    // 4. Jejak Kaki Kucing Berurutan (Staggered Paw Steps)
+    // 4. Animasi Kedipan Mata Kucing Alami (Natural Blink)
+    const blinkLoop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(2600),
+        Animated.timing(blinkAnim, {
+          toValue: 0.1,
+          duration: 80,
+          useNativeDriver: true,
+        }),
+        Animated.timing(blinkAnim, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // 5. Jejak Kaki Bertahap (Staggered Paws)
     const pawsLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(paw1Scale, {
@@ -157,9 +172,10 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
 
     floatLoop.start();
     glowLoop.start();
+    blinkLoop.start();
     pawsLoop.start();
 
-    // 5. Timer Transisi Keluar yang Mulus
+    // 6. Transisi Keluar yang Mulus
     const exitTimer = setTimeout(() => {
       Animated.timing(exitOpacity, {
         toValue: 0,
@@ -175,12 +191,14 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
       clearTimeout(exitTimer);
       floatLoop.stop();
       glowLoop.stop();
+      blinkLoop.stop();
       pawsLoop.stop();
     };
   }, [
     bounceY,
     scale,
     pulseOrb,
+    blinkAnim,
     paw1Scale,
     paw2Scale,
     paw3Scale,
@@ -207,7 +225,7 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
 
       {/* Kontainer Utama Terpusat */}
       <View style={styles.centerContainer}>
-        {/* Lingkaran Cahaya Lembut (Ambient Glow) */}
+        {/* Lingkaran Cahaya Lembut (Ambient Glow Aura) */}
         <Animated.View
           style={[
             styles.glowBackdrop,
@@ -226,24 +244,123 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
           ]}
         />
 
-        {/* Kartu Ikon Aplikasi Resmi dengan Animasi Floating & Breathing */}
+        {/* Kartu Maskot Kucing Presisi & Rapi (Clean Geometric Cat Mascot) */}
         <Animated.View
           style={[
-            styles.iconContainer,
+            styles.mascotCard,
             {
+              backgroundColor: theme.surface,
+              borderColor: theme.border,
               shadowColor: theme.accent,
-              borderColor: theme.isNight
-                ? 'rgba(255, 255, 255, 0.12)'
-                : 'rgba(0, 0, 0, 0.06)',
               transform: [{ translateY: bounceY }, { scale }],
             },
           ]}
         >
-          <Image
-            source={APP_ICON}
-            style={styles.iconImage}
-            resizeMode="cover"
+          {/* Indikator Langit / Orb Celestial (Matahari / Bulan) */}
+          <View
+            style={[
+              styles.skyOrb,
+              {
+                backgroundColor: theme.isNight ? '#F09A4B' : '#F4B942',
+              },
+            ]}
           />
+
+          {/* Maskot Kucing Rapi Terpusat */}
+          <View style={styles.catStructure}>
+            {/* Telinga Kucing Simetris */}
+            <View style={styles.earsRow}>
+              <View
+                style={[
+                  styles.catEar,
+                  styles.leftEar,
+                  { backgroundColor: theme.accent },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.innerEar,
+                    styles.leftInnerEar,
+                    { backgroundColor: theme.surface },
+                  ]}
+                />
+              </View>
+
+              <View
+                style={[
+                  styles.catEar,
+                  styles.rightEar,
+                  { backgroundColor: theme.accent },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.innerEar,
+                    styles.rightInnerEar,
+                    { backgroundColor: theme.surface },
+                  ]}
+                />
+              </View>
+            </View>
+
+            {/* Kepala Kucing Bulat Presisi */}
+            <View
+              style={[
+                styles.catHead,
+                { backgroundColor: theme.accent },
+              ]}
+            >
+              {/* Kumis Kiri */}
+              <View style={styles.leftWhiskers}>
+                <View style={[styles.whisker, styles.whiskerTopLeft]} />
+                <View style={[styles.whisker, styles.whiskerBottomLeft]} />
+              </View>
+
+              {/* Kumis Kanan */}
+              <View style={styles.rightWhiskers}>
+                <View style={[styles.whisker, styles.whiskerTopRight]} />
+                <View style={[styles.whisker, styles.whiskerBottomRight]} />
+              </View>
+
+              {/* Area Wajah Kucing */}
+              <View style={styles.faceArea}>
+                {/* Baris Mata dengan Animasi Kedipan Alami */}
+                <Animated.View
+                  style={[
+                    styles.eyesRow,
+                    { transform: [{ scaleY: blinkAnim }] },
+                  ]}
+                >
+                  {/* Mata Kiri */}
+                  <View style={styles.eyeContainer}>
+                    <View style={styles.eyeCircle}>
+                      <View style={styles.eyeGlint} />
+                    </View>
+                  </View>
+
+                  {/* Mata Kanan */}
+                  <View style={styles.eyeContainer}>
+                    <View style={styles.eyeCircle}>
+                      <View style={styles.eyeGlint} />
+                    </View>
+                  </View>
+                </Animated.View>
+
+                {/* Pipi Merona & Hidung Imut */}
+                <View style={styles.blushAndNoseRow}>
+                  <View style={styles.blush} />
+                  <View style={styles.catNose} />
+                  <View style={styles.blush} />
+                </View>
+
+                {/* Senyum Kucing W :3 */}
+                <View style={styles.mouthRow}>
+                  <View style={styles.mouthCurve} />
+                  <View style={styles.mouthCurve} />
+                </View>
+              </View>
+            </View>
+          </View>
         </Animated.View>
 
         {/* Indikator Jejak Kaki Bertahap */}
@@ -307,7 +424,7 @@ export const AnimatedAppLoader: React.FC<AnimatedAppLoaderProps> = ({
         </Animated.View>
       </View>
 
-      {/* Bagian Bawah: Hak Cipta / Copyright Resmi Yenvys */}
+      {/* Bagian Bawah: Hak Cipta Resmi Yenvys */}
       <Animated.View style={[styles.copyrightContainer, { opacity: textFade }]}>
         <View style={styles.copyrightRow}>
           <PawPrintIcon size={12} color={theme.accent} />
@@ -341,30 +458,193 @@ const styles = StyleSheet.create({
   },
   glowBackdrop: {
     position: 'absolute',
-    width: 220,
-    height: 220,
-    borderRadius: 110,
+    width: 230,
+    height: 230,
+    borderRadius: 115,
   },
-  iconContainer: {
-    width: 112,
-    height: 112,
-    borderRadius: 28,
-    overflow: 'hidden',
+  mascotCard: {
+    width: 120,
+    height: 120,
+    borderRadius: 32,
     borderWidth: 1.5,
-    backgroundColor: '#FAF7F2',
     alignItems: 'center',
     justifyContent: 'center',
-    // Shadow di iOS
+    position: 'relative',
+    overflow: 'hidden',
+    // iOS shadow
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.24,
-    shadowRadius: 18,
-    // Elevation di Android
-    elevation: 10,
-    marginBottom: 18,
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
+    // Android elevation
+    elevation: 8,
+    marginBottom: 16,
   },
-  iconImage: {
-    width: '100%',
-    height: '100%',
+  skyOrb: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+  },
+  catStructure: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  earsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 76,
+    marginBottom: -8,
+    zIndex: 1,
+  },
+  catEar: {
+    width: 26,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  leftEar: {
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 6,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+    transform: [{ rotate: '-12deg' }],
+  },
+  rightEar: {
+    borderTopRightRadius: 14,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+    transform: [{ rotate: '12deg' }],
+  },
+  innerEar: {
+    width: 11,
+    height: 14,
+    opacity: 0.65,
+    marginTop: 4,
+  },
+  leftInnerEar: {
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 3,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
+  rightInnerEar: {
+    borderTopRightRadius: 7,
+    borderTopLeftRadius: 3,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
+  catHead: {
+    width: 82,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+    position: 'relative',
+  },
+  leftWhiskers: {
+    position: 'absolute',
+    left: -7,
+    top: 25,
+    gap: 5,
+  },
+  rightWhiskers: {
+    position: 'absolute',
+    right: -7,
+    top: 25,
+    gap: 5,
+  },
+  whisker: {
+    width: 13,
+    height: 1.8,
+    borderRadius: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+  },
+  whiskerTopLeft: {
+    transform: [{ rotate: '-6deg' }],
+  },
+  whiskerBottomLeft: {
+    transform: [{ rotate: '6deg' }],
+  },
+  whiskerTopRight: {
+    transform: [{ rotate: '6deg' }],
+  },
+  whiskerBottomRight: {
+    transform: [{ rotate: '-6deg' }],
+  },
+  faceArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  eyesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 44,
+    alignItems: 'center',
+  },
+  eyeContainer: {
+    width: 14,
+    height: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eyeCircle: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+    position: 'relative',
+  },
+  eyeGlint: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: '#FFFFFF',
+    position: 'absolute',
+    top: 1,
+    right: 1,
+  },
+  blushAndNoseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 52,
+    marginTop: 2,
+  },
+  blush: {
+    width: 10,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(255, 175, 175, 0.75)',
+  },
+  catNose: {
+    width: 7,
+    height: 4.5,
+    borderRadius: 2.5,
+    backgroundColor: '#FFE3DC',
+  },
+  mouthRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -0.5,
+  },
+  mouthCurve: {
+    width: 6,
+    height: 4.5,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+    borderBottomWidth: 1.6,
+    borderLeftWidth: 1.4,
+    borderRightWidth: 1.4,
+    borderTopWidth: 0,
+    borderColor: '#FFFFFF',
+    marginHorizontal: -0.5,
   },
   pawsTrailRow: {
     flexDirection: 'row',
@@ -384,7 +664,7 @@ const styles = StyleSheet.create({
   brandTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   brandTitle: {
     fontSize: 32,

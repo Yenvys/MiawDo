@@ -43,3 +43,8 @@ yarn-error.*
 # IDE and editors
 .idea/
 .vscode/
+
+# Claude and agent configuration & design documents
+.claude/
+AGENTS.md
+DESIGN.md
