@@ -56,6 +56,13 @@ Aplikasi ini dibangun secara **100% Offline-First** dengan database lokal berkin
 ### 6. ⏰ Pengingat & Notifikasi Lokal
 - Pengingat jatuh tempo tugas langsung di perangkat (*local scheduled notifications*).
 - Pengingat rangkuman harian (*Daily Digest*) yang dapat disesuaikan jam tayangnya.
+- Opsi pengingat kustom fleksibel (menit, jam, atau hari sebelum pelaksanaan).
+
+### 7. 🐾 Native Android Home Screen Widget (Responsif & Interaktif)
+- **Ukuran Bebas & Responsif (2x2 hingga Layar Penuh)**: Menyesuaikan secara alami pada layar utama perangkat Anda.
+- **Konsumsi Baterai 0% (*Zero Background Polling*)**: Bekerja dengan arsitektur berbasis event tanpa menjalankan proses latar belakang yang menguras daya.
+- **Sinkronisasi Tema Otomatis**: Warna widget otomatis berganti mengikuti tema aktif aplikasi (Pagi/Malam).
+- **Interaksi Instan**: Centang tugas langsung dari home screen dengan stempel tapak kucing `🐾` dan tombol tambah cepat `[+]`.
 
 ---
 

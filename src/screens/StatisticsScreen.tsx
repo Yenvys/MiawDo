@@ -649,7 +649,7 @@ export const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
             <Text
               style={[styles.aboutSubtitle, { color: theme.textSecondary }]}
             >
-              Versi 1.0.0
+              Versi 1.1.0
             </Text>
           </View>
         </View>

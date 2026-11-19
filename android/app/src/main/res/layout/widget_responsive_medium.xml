@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_card_light"
+    android:padding="12dp">
+
+    <!-- Header Atas: Brand + Tanggal + Counter + Tombol [+] -->
+    <LinearLayout
+        android:id="@+id/medium_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🐾"
+            android:textSize="14sp"
+            android:layout_marginEnd="5dp" />
+
+        <TextView
+            android:id="@+id/widget_app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MiawDo"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#231F20"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/widget_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="• Hari Ini"
+            android:textSize="11.5sp"
+            android:textColor="#5C544E"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/widget_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_badge_counter_light"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:text="0/0 Beres"
+            android:textSize="10.5sp"
+            android:textStyle="bold"
+            android:textColor="#D96B43"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/btn_add_task"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:background="@drawable/widget_btn_add_light"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Garis Pemisah Halus -->
+    <ImageView
+        android:id="@+id/header_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E6DEC8"
+        android:layout_below="@id/medium_header"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Daftar List Tugas Hari Ini (ListView RemoteViews) -->
+    <ListView
+        android:id="@+id/widget_task_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header_divider"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="5dp"
+        android:scrollbars="none" />
+
+    <!-- Tampilan Kosong Jika Tidak Ada Tugas / Semua Beres -->
+    <LinearLayout
+        android:id="@+id/widget_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/empty_cat_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/ᐠ - ˕ -マ ᶻ 𝗓 𐰁"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#D96B43"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/empty_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Semua tugas hari ini selesai!"
+            android:textSize="11.5sp"
+            android:textColor="#7A716A"
+            android:textAlignment="center" />
+    </LinearLayout>
+</RelativeLayout>

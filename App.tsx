@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  AppState,
   Platform,
   Pressable,
   SafeAreaView,
@@ -22,6 +23,11 @@ import { SnoozeAndDetailModal } from './src/components/tasks/SnoozeAndDetailModa
 import { CategoryManagerModal } from './src/components/tasks/CategoryManagerModal';
 import { PawPrintIcon } from './src/components/cat/CatGraphics';
 import { AnimatedAppLoader } from './src/components/loading/AnimatedAppLoader';
+import {
+  syncWidgetWithAppData,
+  syncPendingWidgetActions,
+  checkWidgetLaunchIntent,
+} from './src/engine/widgetSync';
 
 const MainShell: React.FC = () => {
   const {
@@ -69,6 +75,46 @@ const MainShell: React.FC = () => {
     }, 3200);
     return () => clearTimeout(t);
   }, [lastFeedbackMessage, clearFeedbackMessage]);
+
+  // Sinkronisasi data tugas dan tema aplikasi ke Native Widget
+  useEffect(() => {
+    if (!isReady) return;
+    syncWidgetWithAppData(resolvedItems, theme.isNight);
+  }, [isReady, resolvedItems, theme.isNight]);
+
+  // Sinkronisasi aksi widget (centang tugas dari layar beranda / peluncuran dari widget)
+  useEffect(() => {
+    if (!isReady) return;
+
+    const handleSyncAndLaunch = () => {
+      syncPendingWidgetActions(setItemStatus);
+      checkWidgetLaunchIntent().then((launch) => {
+        if (!launch) return;
+        if (launch.openAddTask) {
+          handleOpenAddModal();
+        } else if (launch.instanceKey) {
+          setSelectedInstanceKey(launch.instanceKey);
+        } else if (launch.openTaskId) {
+          const match = resolvedItems.find((i) => i.taskId === launch.openTaskId);
+          if (match) {
+            setSelectedInstanceKey(match.instanceKey);
+          }
+        }
+      });
+    };
+
+    handleSyncAndLaunch();
+
+    const sub = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        handleSyncAndLaunch();
+      }
+    });
+
+    return () => {
+      sub.remove();
+    };
+  }, [isReady, setItemStatus, resolvedItems]);
 
   const selectedResolvedItem: ResolvedTaskItem | null = useMemo(() => {
     if (!selectedInstanceKey) return null;

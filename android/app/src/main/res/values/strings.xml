@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">MiawDo</string>
+  <string name="widget_name">MiawDo Agenda</string>
+  <string name="widget_description">Widget responsif agenda dan daftar kegiatan hari ini bertema kucing</string>
+</resources>

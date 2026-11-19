@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/task_row_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/widget_item_bg_light"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <!-- Tombol Checkbox Jejak Kaki -->
+    <TextView
+        android:id="@+id/btn_task_checkbox"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/widget_checkbox_unchecked_light"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#D96B43"
+        android:textSize="13sp"
+        android:layout_marginEnd="8dp" />
+
+    <!-- Kolom Isi Tugas: Judul & Sub-info -->
+    <LinearLayout
+        android:id="@+id/task_content_wrap"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Judul Kegiatan"
+            android:textSize="12.5sp"
+            android:textStyle="bold"
+            android:textColor="#231F20"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/task_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14:00"
+                android:textSize="10.5sp"
+                android:textColor="#5C544E"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/task_priority_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/widget_priority_high_bg"
+                android:paddingHorizontal="5dp"
+                android:paddingVertical="1dp"
+                android:text="TINGGI"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="#C93B3B" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
